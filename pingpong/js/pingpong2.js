@@ -1,0 +1,142 @@
+var KEY={
+	UP:38,
+	DOWN:40,
+	W:87,
+	S:83
+};
+
+var pingpong={
+	scoreA:0,
+	scoreB:0
+}
+pingpong.pressedKeys={}
+pingpong.ball={
+	speed:5,
+	x:150,
+	y:100,
+	directionX:1,
+	directionY:1
+};
+
+
+$(function(){
+	//设置interval用于每30毫秒调用一次gameloop
+	pingpong.timer=setInterval(gameloop,30);
+	//标记下pressesKeys数组里某键的状态是按下还是放开
+	$(document).keydown(function(e){
+		pingpong.pressedKeys[e.which]=true;
+	});
+	$(document).keyup(function(e){
+		pingpong.pressedKeys[e.which]=false;
+	})
+});
+//游戏主循环
+function gameloop(){
+	moveBall();
+	movePaddles();
+
+}
+
+function movePaddles(){
+	if(pingpong.pressedKeys[KEY.UP]){
+		var top=parseInt($("#paddleB").css("top"));
+		$("#paddleB").css("top",top-5);
+	}
+	if(pingpong.pressedKeys[KEY.DOWN]){
+		var top=parseInt($("#paddleB").css("top"));
+		$("#paddleB").css("top",top+5);
+	}
+	if(pingpong.pressedKeys[KEY.W]){
+		var top=parseInt($("#paddleA").css("top"));
+		$("#paddleA").css("top",top-5);
+	}
+	if(pingpong.pressedKeys[KEY.S]){
+		var top=parseInt($("#paddleA").css("top"));
+		$("#paddleA").css("top",top+5);
+	}
+}
+
+//乒乓球运动
+function moveBall(){
+	//引入需要的变量
+	var playgroundHeight=parseInt($("#playground").height());
+	var playgroundWidth=parseInt($("#playground").width());
+	var ball=pingpong.ball;
+	//检测台球边缘
+	//检测底边
+	if(ball.y+ball.speed*ball.directionY>playgroundHeight){
+		ball.directionY=-1;
+	}
+	//检测顶边
+	if(ball.y+ball.speed*ball.directionY<0){
+		ball.directionY=1;
+	}
+	//检测右边
+//	if(ball.x+ball.speed*ball.directionX>playgroundWidth){
+//		ball.directionX=-1;
+//	}
+	if(ball.x+ball.speed*ball.directionX>playgroundWidth){
+		//玩家B丢分
+		pingpong.scoreA++;
+		$("#scoreA").html(pingpong.scoreA);
+		//重置乒乓球
+		ball.x=250;
+		ball.y=100;
+		$("#ball").css({
+			"left":ball.x,
+			"top":ball.y
+		});
+		ball.directionX=-1;
+	}
+	//检测左边
+//	if(ball.x+ball.speed*ball.directionX<0){
+//		ball.directionX=1;
+//	}
+	if(ball.x+ball.speed*ball.directionX<-20){
+		//玩家A丢分
+		pingpong.scoreB++;
+		$("#scoreB").html(pingpong.scoreB);
+		//重置乒乓球
+		ball.x=150;
+		ball.y=100;
+		
+		$("#ball").css({
+			"left":ball.x,
+			"top":ball.y
+		});
+		ball.directionX=1;
+	}
+	
+	ball.x+=ball.speed*ball.directionX;
+	ball.y+=ball.speed*ball.directionY;
+	
+	
+	//检测球拍
+	//检测左球拍
+	var paddleAX=parseInt($("#paddleA").css("left"))+parseInt($("#paddleA").css("width"));
+	var paddleAYBottom=parseInt($("#paddleA").css("top"))+parseInt($("#paddleA").css("height"));
+	var paddleAYTop=parseInt($("#paddleA").css("top"));
+	if(ball.x+ball.speed*ball.directionX<=paddleAX){
+		if(ball.y+ball.speed*ball.directionY<=paddleAYBottom&&ball.y+ball.speed*ball.directionY>=paddleAYTop){
+			ball.directionX=1;
+		}
+	}
+	//检测右球拍
+	var paddleBX=parseInt($("#paddleB").css("left"));
+	var paddleBYBottom=parseInt($("#paddleB").css("top"))+parseInt($("#paddleB").css("height"));
+	var paddleBYTop=parseInt($("#paddleB").css("top"));
+	
+	if(ball.x+ball.speed*ball.directionX>=paddleBX){
+		if(ball.y+ball.speed*ball.directionY<=paddleBYBottom&&ball.y+ball.speed*ball.directionY>=paddleBYTop){
+			ball.directionX=-1;
+		}
+	}
+	
+	//根据速度与方向移动乒乓球
+	$("#ball").css({
+		"left":ball.x,
+		"top":ball.y
+	});
+	
+	
+}
