@@ -1,0 +1,29 @@
+body{
+	background: #aaa;
+}
+/*纸牌公共样式*/
+.card{
+	width: 80px;
+	height: 120px;
+	margin: 20px;
+	background: #efefef;
+	position: absolute;
+	transition: all 1s linear;
+}
+
+.cardAK{
+	background: url(../img/A.png);
+}
+.cardAQ{
+	background: url(../img/B.png);
+}
+
+/*应用样式的DOM元素旋转90度*/
+.rotateRight{
+	transform: rotate3d(0,0,1,90deg);
+}
+
+/*应用样式的DOM移动并放大*/
+.moveAndScale{
+	transform: translate3d(150px,150px,0) scale3d(1.5,1.5,1);
+}
